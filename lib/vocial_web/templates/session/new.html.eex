@@ -1,0 +1,15 @@
+<div>
+  <%= form_tag session_path(@conn, :create) do %>
+    <label for="username">
+      Username: <br>
+      <input type="text" name="username">
+    </label>
+    <br>
+    <label for="password">
+      Password: <br>
+      <input type="password" name="password">
+    </label>
+    <br>
+    <%= submit "Login" %>
+  <% end %>
+</div>

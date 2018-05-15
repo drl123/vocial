@@ -4,13 +4,21 @@ defmodule Vocial.Accounts.AccountsTest do
   alias Vocial.Accounts
 
   describe "users" do
-    @valid_attrs %{ username: "test", email: "test@test.com", active: true }
+    @valid_attrs %{
+      username:               "test",
+      email:                  "test@test.com",
+      active:                 true,
+      password:               "test",
+      password_confirmation:  "test",
+    }
 
     def user_fixture(attrs \\ %{}) do
       with  create_attrs <- Map.merge(@valid_attrs, attrs),
             {:ok, user}  <- Accounts.create_user(create_attrs)
       do
-        user
+        user |> Map.merge(%{password: nil, password_confirmation: nil})
+      else
+        error -> error
       end
     end
 
@@ -35,6 +43,25 @@ defmodule Vocial.Accounts.AccountsTest do
       updated = Accounts.list_users()
       assert !(Enum.any?(before, fn u -> user == u end))
       assert Enum.any?(updated,  fn u -> user == u end)
+    end
+
+    test "create_user/1 fails to create the user without a password and password_confirmation" do
+      {:error, changeset} = user_fixture(%{password: nil, password_confirmation: nil})
+      assert !changeset.valid?
+    end
+
+    test "create_user/1 failse to create the user when the password and password_confirmation don't match" do
+      {:error, changeset} = user_fixture(%{password: "test", password_confirmation: "fail"})
+      assert !changeset.valid?
+    end
+
+    test "get_user_by_username/1 returns the user with the matching username" do
+      user = user_fixture()
+      assert Accounts.get_user_by_username(user.username)
+    end
+
+    test "get_user_by_username/1 returns the nil with no matching username" do
+      assert is_nil(Accounts.get_user_by_username("fail"))
     end
   end
 end

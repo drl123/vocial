@@ -16,10 +16,14 @@ defmodule VocialWeb.Router do
   scope "/", VocialWeb do
     pipe_through :browser # Use the default browser stack
 
-    get   "/",          PageController, :index
+    get   "/",              PageController, :index
 
-    resources "/polls", PollController, only: [:index, :new, :create]
-    resources "/users", UserController, only: [:show,  :new, :create]
+    resources "/polls",     PollController, only: [:index, :new, :create]
+    resources "/users",     UserController, only: [:show,  :new, :create]
+
+    resources "/sessions",  SessionController,  only: [:create]
+    get "/login",           SessionController,  :new
+    get "/logout",          SessionController,  :delete
   end
 
   # Other scopes may use custom stacks.
