@@ -55,6 +55,27 @@ defmodule Vocial.Accounts.AccountsTest do
       assert !changeset.valid?
     end
 
+    test "create_user/1 fails to create the user when the username already exists" do
+      _user1 = user_fixture()
+      {:error, user2} = user_fixture()
+      assert !user2.valid?
+    end
+
+    test "create_user/1 failse to create the user when the username is too short" do
+      {:error, user} = user_fixture(%{username: "me"})
+      assert !user.valid?
+    end
+
+    test "create_user/1 fails to create the user when the email format is invalid" do
+      {:error, user} = user_fixture(%{email: "testdotcom"})
+      assert !user.valid?
+    end
+
+    test "create_user/1 fails to create the user when the email is a fake email" do
+      {:error, user} = user_fixture(%{email: "test@fake.com"})
+      assert !user.valid?
+    end
+
     test "get_user_by_username/1 returns the user with the matching username" do
       user = user_fixture()
       assert Accounts.get_user_by_username(user.username)
