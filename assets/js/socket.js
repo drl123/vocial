@@ -5,7 +5,49 @@
 // and connect at the socket path in "lib/web/endpoint.ex":
 import {Socket} from "phoenix"
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+// Utility functions
+
+const pushVote = (el, channel) => {
+  channel
+    .push('vote', { option_id: el.getAttribute('data-option-id') })
+    .receive('ok', res => console.log('You voted!'))
+    .receive('error', res => console.log('Failed to vote:', res));
+};
+
+const onJoin = (res, channel) => {
+  document.querySelectorAll('.vote-button-manual').forEach(el => {
+    el.addEventListener('click', event => {
+      event.preventDefault();
+      pushVote(el, channel);
+    });
+  });
+  console.log('Joined channel:', res);
+};
+
+// let socket = new Socket("/socket", {params: {token: window.userToken}})
+const socket = new Socket('/socket');
+socket.connect();
+
+if (document.getElementById('enable-polls-channel')) {
+  const channel = socket.channel('polls:lobby', {});
+  channel
+    .join()
+    .receive('ok', res => onJoin(res, channel))
+    .receive('error', res => console.log('Failed to join channel:', res));
+
+  document.getElementById("polls-ping").addEventListener("click", () => {
+    channel
+      .push("ping")
+      .receive("ok",    res => console.log("Received PING response:", res.message))
+      .receive("error", res => console.log("Error sending PING:", res));
+  });
+
+  channel.on('new_vote', ({ option_id, votes }) => {
+    document.getElementById('vote-count-' + option_id).innerHTML = votes;
+  });
+}
+export default socket;
+
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -51,12 +93,12 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 // Finally, pass the token on connect as below. Or remove it
 // from connect if you don't care about authentication.
 
-socket.connect()
-
-// Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("topic:subtopic", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
-
-export default socket
+// socket.connect()
+//
+// // Now that you are connected, you can join channels with a topic:
+// let channel = socket.channel("topic:subtopic", {})
+// channel.join()
+//   .receive("ok", resp => { console.log("Joined successfully", resp) })
+//   .receive("error", resp => { console.log("Unable to join", resp) })
+//
+// export default socket
