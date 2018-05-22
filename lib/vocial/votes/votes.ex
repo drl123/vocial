@@ -15,7 +15,8 @@ defmodule Vocial.Votes do
   def create_poll_with_options(poll_attrs, options) do
     Repo.transaction(fn ->
       with {:ok, poll} <- create_poll(poll_attrs),
-           {:ok, _options} <- create_options(options, poll)
+           {:ok, _options} <- create_options(options, poll),
+           {:ok, _filename} <- upload_file(poll_attrs, poll)
         do
         poll |> Repo.preload(:options)
       else
@@ -66,4 +67,12 @@ defmodule Vocial.Votes do
   end
 
   def get_poll(id), do: Repo.get!(Poll, id) |> Repo.preload(:options)
+
+  defp upload_file(%{"image" => image, "user_id" => user_id}, poll) do
+    extension = Path.extname(image.filename)
+    filename = "#{user_id}-#{poll.id}-image#{extension}"
+    File.cp(image.path, "./uploads/#{filename}")
+    {:ok, filename}
+  end
+  defp upload_file(_, _), do: {:ok, nil}
 end
