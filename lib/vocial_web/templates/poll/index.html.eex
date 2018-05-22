@@ -1,14 +1,4 @@
-<i id="enable-polls-channel"/i>
-
 <%= for poll <- @polls do %>
-  <h2>Poll: <%= poll.title %></h2>
-  <%= for option <- Enum.sort(poll.options, &(&1.id >= &2.id)) do %>
-    <strong><%= option.title %></strong>
-    <span id="vote-count-<%= option.id %>" class="vote-count-<%= option.id %>" ><%= option.votes %></span>
-    <a href="/options/<%= option.id %>/vote"
-       class="btn btn-primary vote-button-manual"
-       data-option-id="<%= option.id %>">Vote</a>
-    <br />
-  <% end %>
+  <%= render("_poll.html", %{ poll: poll }) %>
 <% end %>
 

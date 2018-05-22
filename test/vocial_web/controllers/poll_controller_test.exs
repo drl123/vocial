@@ -77,4 +77,9 @@ defmodule VocialWeb.PollControllerTest do
     assert redirected_to(conn) == "/polls"
     assert after_option.votes == (before_votes + 1)
   end
+
+  test "GET /polls/:id", %{conn: conn, poll: poll} do
+    conn = get conn, "/polls/#{poll.id}"
+    assert html_response(conn, 200) =~ poll.title
+  end
 end

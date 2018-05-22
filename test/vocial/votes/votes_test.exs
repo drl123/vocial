@@ -72,5 +72,10 @@ defmodule Vocial.Votes.VotesTest do
         assert (votes_before + 1) == updated_option.votes
       end
     end
+
+    test "show_poll/1 returns a specific poll", %{user: user} do
+      poll = poll_fixture(%{user_id: user.id})
+      assert Votes.get_poll(poll.id) == poll
+    end
   end
 end
