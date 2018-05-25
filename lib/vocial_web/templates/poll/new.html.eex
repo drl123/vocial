@@ -16,6 +16,16 @@
     <%= file_input f, :image %>
   </label>
   <br>
+  <label>
+    Image Caption:<br>
+    <input type="text" name="image_data[caption]" />
+  </label>
+  <br>
+  <label>
+    Image Alt Text:<br>
+    <input type="text" name="image_data[alt_text]" />
+  </label>
+  <br>
   <%= submit "Create" %>
   <% end %>
 </div>
