@@ -2,10 +2,10 @@ defmodule Vocial.Votes do
   import Ecto.Query, warn: false
 
   alias Vocial.Repo
-  alias Vocial.Votes.{Option, Poll, Image}
+  alias Vocial.Votes.{Option, Poll, Image, VoteRecord}
 
   def list_polls do
-    Repo.all(Poll) |> Repo.preload([:options, :image])
+    Repo.all(Poll) |> Repo.preload([:options, :image, :vote_records])
   end
 
   def new_poll do
@@ -17,7 +17,7 @@ defmodule Vocial.Votes do
       with {:ok, poll} <- create_poll(poll_attrs),
            {:ok, _options} <- create_options(options, poll),
            {:ok, filename} <- upload_file(poll_attrs, poll),
-           {:ok, upload}   <- save_upload(poll, image_data, filename)
+           {:ok, _upload}   <- save_upload(poll, image_data, filename)
         do
         poll |> Repo.preload(:options)
       else
@@ -53,11 +53,13 @@ defmodule Vocial.Votes do
     Repo.all(Option) |> Repo.preload(:poll)
   end
 
-  def vote_on_option(option_id )do
+  def vote_on_option(option_id, voter_ip)do
     with option <- Repo.get!(Option, option_id),
-          votes <- option.votes + 1
+          votes <- option.votes + 1,
+         {:ok, option} <- update_option(option, %{votes: votes}),
+         {:ok, _vote_record} <- record_vote(%{poll_id: option.poll_id, ip_address: voter_ip})
     do
-      update_option(option, %{votes: votes})
+      {:ok, option}
     end
   end
 
@@ -67,7 +69,7 @@ defmodule Vocial.Votes do
     |> Repo.update()
   end
 
-  def get_poll(id), do: Repo.get!(Poll, id) |> Repo.preload([:options, :image])
+  def get_poll(id), do: Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records])
 
   defp upload_file(%{"image" => image, "user_id" => user_id}, poll) do
     extension = Path.extname(image.filename)
@@ -89,6 +91,12 @@ defmodule Vocial.Votes do
 
     %Image{}
     |> Image.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def record_vote(%{poll_id: _poll_id, ip_address: _ip_address}= attrs) do
+    %VoteRecord{}
+    |> VoteRecord.changeset(attrs)
     |> Repo.insert()
   end
 end

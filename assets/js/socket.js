@@ -32,7 +32,10 @@ const enableSocket = document.getElementById('enable-polls-channel');
 if (enableSocket) {
   const pollId = enableSocket.getAttribute('data-poll-id');
 
-  const channel = socket.channel('polls:' + pollId, {});
+  // Get the stored remote IP for the user
+  const remote_ip = document.getElementsByName('remote_ip')[0].getAttribute('content');
+
+  const channel = socket.channel('polls:' + pollId, {remote_ip: remote_ip});
   channel
     .join()
     .receive('ok', res => onJoin(res, channel))
