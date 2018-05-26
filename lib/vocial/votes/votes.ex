@@ -12,7 +12,7 @@ defmodule Vocial.Votes do
     Poll.changeset(%Poll{}, %{})
   end
 
-  def create_poll_with_options(poll_attrs, options, image_data) do
+  def create_poll_with_options(poll_attrs, options, image_data \\ nil) do
     Repo.transaction(fn ->
       with {:ok, poll} <- create_poll(poll_attrs),
            {:ok, _options} <- create_options(options, poll),

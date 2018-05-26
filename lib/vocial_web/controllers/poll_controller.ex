@@ -32,6 +32,10 @@ defmodule VocialWeb.PollController do
     end
   end
 
+  def create(conn, %{"poll" => _poll_params, "options" => _options} = params) do
+    create(conn, Map.put(params, "image_data", nil))
+  end
+
   def vote(conn, %{"id" => id}) do
     voter_ip = conn.remote_ip
     |> Tuple.to_list()
