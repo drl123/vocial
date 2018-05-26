@@ -40,6 +40,10 @@ defmodule VocialWeb.PollController do
       conn
       |> put_flash(:info, "Placed a vote for #{option.title}!")
       |> redirect(to: poll_path(conn, :index))
+    else
+      _ -> conn
+            |> put_flash(:error, "Could not vote!")
+            |> redirect(to: poll_path(conn, :index))
     end
   end
 
