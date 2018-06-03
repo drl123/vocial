@@ -2,7 +2,7 @@ defmodule Vocial.Votes do
   import Ecto.Query, warn: false
 
   alias Vocial.Repo
-  alias Vocial.Votes.{Option, Poll, Image, VoteRecord}
+  alias Vocial.Votes.{Message, Option, Poll, Image, VoteRecord}
 
   def list_polls do
     Repo.all(Poll) |> Repo.preload([:options, :image, :vote_records])
@@ -107,5 +107,30 @@ defmodule Vocial.Votes do
     votes = (from vr in VoteRecord, where: vr.poll_id == ^poll_id and vr.ip_address == ^ip_address)
     |> Repo.aggregate(:count, :id)
     votes > 0
+  end
+
+  def list_lobby_messages do
+    Repo.all(
+      from m in Message,
+      where: is_nil(m.poll_id),
+      order_by: [desc: :inserted_at],
+      limit: 100
+    )
+  end
+
+  def list_poll_messages(poll_id) do
+    Repo.all(
+      from m in Message,
+      where: m.poll_id == ^poll_id,
+      order_by: [desc: :inserted_at],
+      limit: 100,
+      preload: [:poll]
+    )
+  end
+
+  def create_message(attrs) do
+    %Message{}
+    |> Message.changeset(attrs)
+    |> Repo.insert()
   end
 end

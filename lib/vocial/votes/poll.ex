@@ -1,7 +1,7 @@
 defmodule Vocial.Votes.Poll do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Vocial.Votes.{Image, Option, Poll, VoteRecord}
+  alias Vocial.Votes.{Image, Message, Option, Poll, VoteRecord}
   alias Vocial.Accounts.User
 
   schema "polls" do
@@ -10,6 +10,7 @@ defmodule Vocial.Votes.Poll do
     has_one     :image,         Image
     has_many    :options,       Option
     has_many    :vote_records,  VoteRecord
+    has_many    :messages,      Message
     belongs_to  :user,          User
 
     timestamps()
