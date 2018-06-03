@@ -12,9 +12,7 @@
 </head>
 <body>
 <div class="container">
-  <header class="header">
-    <h4>Logo</h4>
-  </header>
+  <%= render "_nav.html", conn: @conn %>
   <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info)
   %></p>
   <p class="alert alert-danger" role="alert"><%= get_flash(@conn,
