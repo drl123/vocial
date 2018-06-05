@@ -3,4 +3,4 @@
   <p class="lead">A social voting app!</p>
 </div>
 
-<%= render(VocialWeb.SharedView, "_chat.html", messages: @messages) %>
+<%= render(VocialWeb.SharedView, "_chat.html", messages: @messages, chatroom: "lobby") %>

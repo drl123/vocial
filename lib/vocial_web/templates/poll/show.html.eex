@@ -4,4 +4,4 @@
 
 <%= render("_poll.html", %{ poll: @poll, conn: @conn }) %>
 
-<%= render(VocialWeb.SharedView, "_chat.html") %>
+<%= render(VocialWeb.SharedView, "_chat.html", chatroom: @poll.id, messages: @poll.messages) %>

@@ -45,8 +45,13 @@ const connect = (socket) => {
     return;
   }
 
+  // Get the chatroom that we're supposed to connect to
+  const chatroom = document
+    .getElementById("enable-chat-channel")
+    .getAttribute("data-chatroom");
+
   // Create a channel to handle the joining/sending/receiving
-  const channel = socket.channel("chat:lobby");
+  const channel = socket.channel("chat:" + chatroom);
 
   // Next, join the topic on the channel!
   channel

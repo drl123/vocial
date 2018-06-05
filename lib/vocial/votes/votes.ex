@@ -5,7 +5,7 @@ defmodule Vocial.Votes do
   alias Vocial.Votes.{Message, Option, Poll, Image, VoteRecord}
 
   def list_polls do
-    Repo.all(Poll) |> Repo.preload([:options, :image, :vote_records])
+    Repo.all(Poll) |> Repo.preload([:options, :image, :vote_records, :messages])
   end
 
   def new_poll do
@@ -72,7 +72,9 @@ defmodule Vocial.Votes do
     |> Repo.update()
   end
 
-  def get_poll(id), do: Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records])
+  def get_poll(id) do
+    Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records, :messages])
+  end
 
   defp upload_file(%{"image" => image, "user_id" => user_id}, poll) do
     extension = Path.extname(image.filename)
