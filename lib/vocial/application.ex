@@ -15,6 +15,7 @@ defmodule Vocial.Application do
       # Start your own worker by calling: Vocial.Worker.start_link(arg1, arg2, arg3)
       # worker(Vocial.Worker, [arg1, arg2, arg3]),
       supervisor(VocialWeb.Presence, []),
+      supervisor(Vocial.ChatCache, []),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
